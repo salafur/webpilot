@@ -1,0 +1,28 @@
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest
+
+      # windows-latest 自带 Chrome/Edge；框架会自动检测浏览器版本
+      # 并下载匹配的 driver，无需额外安装步骤
+      - name: Run end-to-end tests
+        run: pytest tests/ -v --tb=short
